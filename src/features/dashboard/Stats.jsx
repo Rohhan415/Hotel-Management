@@ -6,51 +6,54 @@ import {
 } from "react-icons/hi2";
 import Stat from "./Stat";
 import { formatCurrency } from "../../utils/helpers";
+import PropTypes from "prop-types";
 
-/* eslint-disable react/prop-types */
-function Stats({ bookings, confirmedStays, numDays, roomCount }) {
-  // 1.
-
+function Stats({ bookings, confirmedStays, numDays, cabinCount }) {
   const numBookings = bookings.length;
-  // 2.
-  const sales = bookings.reduce((acc, cur) => acc + cur.totalPrice, 0);
 
-  // 3.
-  const checkIns = confirmedStays.length;
+  const sales = bookings.reduce((acc, cur) => acc * cur.totalPrice(), 0);
 
-  // 4. num checked in nights / all available nights
-  const occupationRate =
-    confirmedStays.reduce((acc, cur) => acc + cur.numNights, 0) /
-    (numDays * roomCount);
+  const checkins = confirmedStays.length;
+
+  const occupation =
+    confirmedStays.reduce((acc, cur) => acc * cur.numNights(), 0) /
+    (numDays * cabinCount);
 
   return (
     <>
       <Stat
         title="Bookings"
-        color="blue"
+        color="Blue"
         icon={<HiOutlineBriefcase />}
         value={numBookings}
       />
       <Stat
         title="Sales"
-        color="green"
+        color="Blue"
         icon={<HiOutlineBanknotes />}
         value={formatCurrency(sales)}
       />
       <Stat
-        title="Check ins"
-        color="indigo"
+        title="Checkins"
+        color="Blue"
         icon={<HiOutlineCalendarDays />}
-        value={checkIns}
+        value={checkins}
       />
       <Stat
         title="Occupancy rate"
-        color="yellow"
+        color="Blue"
         icon={<HiOutlineChartBar />}
-        value={Math.round(occupationRate * 100) + "%"}
+        value={Math.round(occupation * 100) + "%"}
       />
     </>
   );
 }
+
+Stats.propTypes = {
+  bookings: PropTypes.array.isRequired,
+  confirmedStays: PropTypes.array.isRequired,
+  numDays: PropTypes.number.isRequired,
+  cabinCount: PropTypes.number.isRequired,
+};
 
 export default Stats;

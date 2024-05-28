@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import styled from "styled-components";
+import PropTypes from 'prop-types';
 
 const StyledStat = styled.div`
   /* Box */
@@ -57,5 +58,13 @@ function Stat({ icon, title, value, color }) {
     </StyledStat>
   );
 }
+
+Stat.propTypes = {
+    icon: PropTypes.node.isRequired, 
+    title: PropTypes.string.isRequired, 
+    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    color: PropTypes.string.isRequired, 
+  };
+  
 
 export default Stat;

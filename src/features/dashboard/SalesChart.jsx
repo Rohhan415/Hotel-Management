@@ -1,17 +1,18 @@
 /* eslint-disable react/prop-types */
 import styled from "styled-components";
 import DashboardBox from "./DashboardBox";
-import Heading from "../../ui/Heading";
 import {
   Area,
   AreaChart,
-  CartesianGrid,
   ResponsiveContainer,
-  Tooltip,
   XAxis,
   YAxis,
+  Tooltip,
+  CartesianGrid,
 } from "recharts";
 import { eachDayOfInterval, format, isSameDay, subDays } from "date-fns";
+import Heading from "../../ui/Heading";
+import PropTypes from "prop-types";
 
 const StyledSalesChart = styled(DashboardBox)`
   grid-column: 1 / -1;
@@ -22,7 +23,7 @@ const StyledSalesChart = styled(DashboardBox)`
     stroke: var(--color-grey-300);
   }
 `;
-
+/*
 const fakeData = [
   { label: "Jan 09", totalSales: 480, extrasSales: 20 },
   { label: "Jan 10", totalSales: 580, extrasSales: 100 },
@@ -55,9 +56,22 @@ const fakeData = [
   { label: "Feb 06", totalSales: 1450, extrasSales: 400 },
 ];
 
+const isDarkMode = true;
+const colors = isDarkMode
+  ? {
+      totalSales: { stroke: "#4f46e5", fill: "#4f46e5" },
+      extrasSales: { stroke: "#22c55e", fill: "#22c55e" },
+      text: "#e5e7eb",
+      background: "#18212f",
+    }
+  : {
+      totalSales: { stroke: "#4f46e5", fill: "#c7d2fe" },
+      extrasSales: { stroke: "#16a34a", fill: "#dcfce7" },
+      text: "#374151",
+      background: "#fff",
+    };
+*/
 function SalesChart({ bookings, numDays }) {
-  const isDarkMode = false;
-
   const allDates = eachDayOfInterval({
     start: subDays(new Date(), numDays - 1),
     end: new Date(),
@@ -75,54 +89,34 @@ function SalesChart({ bookings, numDays }) {
     };
   });
 
-  console.log(data);
-
-  const colors = isDarkMode
-    ? {
-        totalSales: { stroke: "#4f46e5", fill: "#4f46e5" },
-        extrasSales: { stroke: "#22c55e", fill: "#22c55e" },
-        text: "#e5e7eb",
-        background: "#18212f",
-      }
-    : {
-        totalSales: { stroke: "#4f46e5", fill: "#c7d2fe" },
-        extrasSales: { stroke: "#16a34a", fill: "#dcfce7" },
-        text: "#374151",
-        background: "#fff",
-      };
-  console.log(colors, fakeData);
   return (
     <StyledSalesChart>
       <Heading as="h2">
-        Sales from {format(allDates.at(0), "MMM dd yyyy")} &mdash;
+        Sales from {format(allDates.at(0), "MMM dd yyyy")} -{" "}
         {format(allDates.at(-1), "MMM dd yyyy")}
       </Heading>
       <ResponsiveContainer height={300} width="100%">
-        <AreaChart data={data} height={300}>
-          <XAxis
-            dataKey="label"
-            tick={{ fill: colors.text }}
-            tickLine={{ stroke: colors.text }}
-          />
+        <AreaChart data={data}>
+          <XAxis dataKey="label" />
           <YAxis unit="$" />
-          <Tooltip contentStyle={{ backgroundColor: colors.background }} />
-          <CartesianGrid strokeDasharray="4" />
+          <CartesianGrid strokeDashArray="4" />
+          <Tooltip />
           <Area
             dataKey="totalSales"
             type="monotone"
-            stroke={colors.totalSales.stroke}
-            fill={colors.totalSales.fill}
+            stroke="red"
+            fill="orange"
             strokeWidth={2}
-            name="Total sales"
+            name="Total Sales"
             unit="$"
           />
           <Area
             dataKey="extrasSales"
             type="monotone"
-            stroke={colors.totalSales.stroke}
-            fill={colors.totalSales.fill}
+            stroke="red"
+            fill="orange"
             strokeWidth={2}
-            name="Extras sales"
+            name="Extras Sales"
             unit="$"
           />
         </AreaChart>
@@ -130,5 +124,10 @@ function SalesChart({ bookings, numDays }) {
     </StyledSalesChart>
   );
 }
+
+SalesChart.propTypes = {
+  bookings: PropTypes.array.isRequired,
+  numDays: PropTypes.number.isRequired,
+};
 
 export default SalesChart;
