@@ -1,5 +1,9 @@
 import styled from "styled-components";
 import DashboardBox from "./DashboardBox";
+import {Area, AreaChart, ResponsiveContainer, XAxis,YAxis,Tooltip,CartesianGrid } from "recharts";
+import { eachDayOfInterval, format, isSameDay,subDays } from "date-fns";
+import Heading from "../../ui/Heading";
+import PropTypes from 'prop-types';
 
 const StyledSalesChart = styled(DashboardBox)`
   grid-column: 1 / -1;
@@ -10,7 +14,7 @@ const StyledSalesChart = styled(DashboardBox)`
     stroke: var(--color-grey-300);
   }
 `;
-
+/*
 const fakeData = [
   { label: "Jan 09", totalSales: 480, extrasSales: 20 },
   { label: "Jan 10", totalSales: 580, extrasSales: 100 },
@@ -57,3 +61,60 @@ const colors = isDarkMode
       text: "#374151",
       background: "#fff",
     };
+*/
+    function SalesChart({bookings, numDays}) {
+      const allDates = eachDayOfInterval({
+        start: subDays(new Date(), numDays - 1),
+        end: new Date(),
+      });
+
+      const data = allDates.map((date) => {
+        return{
+          label: format(date, "MMM dd"),
+          totalSales: bookings.filter((booking) => isSameDay(date, new Date(booking.created_at))).reduce((acc, cur) => 
+            acc + cur.totalPrice, 0),
+          extrasSales: bookings.filter((booking) => isSameDay(date, new Date(booking.created_at))).reduce((acc, cur) => 
+            acc + cur.extrasPrice, 0),
+          };
+      })
+
+
+      return(
+      <StyledSalesChart>
+        <Heading as="h2">Sales from {format(allDates.at(0), "MMM dd yyyy")} - {format(allDates.at(-1), "MMM dd yyyy")}</Heading>
+        <ResponsiveContainer height={300} width="100%">
+        <AreaChart data={data}>
+          <XAxis dataKey="label"/>
+          <YAxis unit = "$"/>
+          <CartesianGrid strokeDashArray = "4"/>
+          <Tooltip/>
+          <Area 
+            dataKey="totalSales"
+            type="monotone"
+            stroke="red"
+            fill="orange"
+            strokeWidth={2}
+            name="Total Sales"
+            unit="$"
+            />
+            <Area 
+            dataKey="extrasSales"
+            type="monotone"
+            stroke="red"
+            fill="orange"
+            strokeWidth={2}
+            name="Extras Sales"
+            unit="$"
+            />
+        </AreaChart>
+        </ResponsiveContainer>
+      </StyledSalesChart>
+      );
+    }
+
+    SalesChart.propTypes = {
+      bookings: PropTypes.array.isRequired,
+      numDays: PropTypes.number.isRequired,
+    };
+
+    export default SalesChart

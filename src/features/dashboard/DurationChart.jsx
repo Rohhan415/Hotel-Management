@@ -1,4 +1,7 @@
+import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import styled from "styled-components";
+import Heading from "../../ui/Heading";
+import PropTypes from 'prop-types';
 
 const ChartBox = styled.div`
   /* Box */
@@ -60,7 +63,7 @@ const startDataLight = [
     color: "#a855f7",
   },
 ];
-
+/*
 const startDataDark = [
   {
     duration: "1 night",
@@ -103,7 +106,7 @@ const startDataDark = [
     color: "#7e22ce",
   },
 ];
-
+*/
 function prepareData(startData, stays) {
   // A bit ugly code, but sometimes this is what it takes when working with real data 😅
 
@@ -130,3 +133,48 @@ function prepareData(startData, stays) {
 
   return data;
 }
+
+
+function DurationChart({confirmedStays}) {
+  const data = prepareData(startDataLight, confirmedStays);
+
+  return <ChartBox>
+
+    <Heading as="h2">Stay Duration Summary</Heading>
+    <ResponsiveContainer width='100%' height={240}>
+      <PieChart>
+        <Pie data={data}
+        nameKey="duration"
+        dataKey="value"
+        innerRadius={85}
+        outerRadius={110}
+        cx="40%"
+        cv="50%"
+        paddingAngle={3}
+        >
+          {data.map(entry=>
+          <Cell 
+            fill={entry.color} 
+            stroke={entry.color}
+            key={entry.duration}
+          />)}
+        </Pie>
+        <Tooltip/>
+        <Legend
+          verticalAlign="middle"
+          align="right"
+          width="30%"
+          layout="vertical"
+          iconSize={15}
+          iconType="circle"
+        />
+      </PieChart>
+    </ResponsiveContainer>
+  </ChartBox>
+}
+
+DurationChart.propTypes = {
+  confirmedStays: PropTypes.array.isRequired,
+};
+
+export default DurationChart;
