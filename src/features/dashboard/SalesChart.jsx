@@ -72,6 +72,8 @@ const colors = isDarkMode
     };
 */
 function SalesChart({ bookings, numDays }) {
+  const isDarkMode = false;
+
   const allDates = eachDayOfInterval({
     start: subDays(new Date(), numDays - 1),
     end: new Date(),
@@ -89,34 +91,54 @@ function SalesChart({ bookings, numDays }) {
     };
   });
 
+  console.log(data);
+
+  const colors = isDarkMode
+    ? {
+        totalSales: { stroke: "#4f46e5", fill: "#4f46e5" },
+        extrasSales: { stroke: "#22c55e", fill: "#22c55e" },
+        text: "#e5e7eb",
+        background: "#18212f",
+      }
+    : {
+        totalSales: { stroke: "#4f46e5", fill: "#c7d2fe" },
+        extrasSales: { stroke: "#16a34a", fill: "#dcfce7" },
+        text: "#374151",
+        background: "#fff",
+      };
+
   return (
     <StyledSalesChart>
       <Heading as="h2">
-        Sales from {format(allDates.at(0), "MMM dd yyyy")} -{" "}
+        Sales from {format(allDates.at(0), "MMM dd yyyy")} &mdash;
         {format(allDates.at(-1), "MMM dd yyyy")}
       </Heading>
       <ResponsiveContainer height={300} width="100%">
-        <AreaChart data={data}>
-          <XAxis dataKey="label" />
+        <AreaChart data={data} height={300}>
+          <XAxis
+            dataKey="label"
+            tick={{ fill: colors.text }}
+            tickLine={{ stroke: colors.text }}
+          />
           <YAxis unit="$" />
-          <CartesianGrid strokeDashArray="4" />
-          <Tooltip />
+          <Tooltip contentStyle={{ backgroundColor: colors.background }} />
+          <CartesianGrid strokeDasharray="4" />
           <Area
             dataKey="totalSales"
             type="monotone"
-            stroke="red"
-            fill="orange"
+            stroke={colors.totalSales.stroke}
+            fill={colors.totalSales.fill}
             strokeWidth={2}
-            name="Total Sales"
+            name="Total sales"
             unit="$"
           />
           <Area
             dataKey="extrasSales"
             type="monotone"
-            stroke="red"
-            fill="orange"
+            stroke={colors.totalSales.stroke}
+            fill={colors.totalSales.fill}
             strokeWidth={2}
-            name="Extras Sales"
+            name="Extras sales"
             unit="$"
           />
         </AreaChart>

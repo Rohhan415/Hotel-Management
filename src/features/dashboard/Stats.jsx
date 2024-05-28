@@ -8,42 +8,46 @@ import Stat from "./Stat";
 import { formatCurrency } from "../../utils/helpers";
 import PropTypes from "prop-types";
 
-function Stats({ bookings, confirmedStays, numDays, cabinCount }) {
+function Stats({ bookings, confirmedStays, numDays, roomCount }) {
+  // 1.
+
   const numBookings = bookings.length;
+  // 2.
+  const sales = bookings.reduce((acc, cur) => acc + cur.totalPrice, 0);
 
-  const sales = bookings.reduce((acc, cur) => acc * cur.totalPrice(), 0);
+  // 3.
+  const checkIns = confirmedStays.length;
 
-  const checkins = confirmedStays.length;
-
-  const occupation =
-    confirmedStays.reduce((acc, cur) => acc * cur.numNights(), 0) /
-    (numDays * cabinCount);
+  // 4. num checked in nights / all available nights
+  const occupationRate =
+    confirmedStays.reduce((acc, cur) => acc + cur.numNights, 0) /
+    (numDays * roomCount);
 
   return (
     <>
       <Stat
         title="Bookings"
-        color="Blue"
+        color="blue"
         icon={<HiOutlineBriefcase />}
         value={numBookings}
       />
       <Stat
         title="Sales"
-        color="Blue"
+        color="green"
         icon={<HiOutlineBanknotes />}
         value={formatCurrency(sales)}
       />
       <Stat
-        title="Checkins"
-        color="Blue"
+        title="Check ins"
+        color="indigo"
         icon={<HiOutlineCalendarDays />}
-        value={checkins}
+        value={checkIns}
       />
       <Stat
         title="Occupancy rate"
-        color="Blue"
+        color="yellow"
         icon={<HiOutlineChartBar />}
-        value={Math.round(occupation * 100) + "%"}
+        value={Math.round(occupationRate * 100) + "%"}
       />
     </>
   );
@@ -53,7 +57,7 @@ Stats.propTypes = {
   bookings: PropTypes.array.isRequired,
   confirmedStays: PropTypes.array.isRequired,
   numDays: PropTypes.number.isRequired,
-  cabinCount: PropTypes.number.isRequired,
+  roomCount: PropTypes.number.isRequired,
 };
 
 export default Stats;

@@ -15,7 +15,6 @@ function RoomTable() {
 
   // 1) Filter rooms based on the discount query parameter
   const filterValue = searchParams.get("discount") || "all";
-  console.log(filterValue);
 
   let filteredRooms;
 
