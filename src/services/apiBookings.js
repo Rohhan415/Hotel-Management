@@ -8,7 +8,7 @@ export async function getBookings({ filter, sortBy, page }) {
   let query = supabase
     .from("bookings")
     .select(
-      "id, created_at, startDate, endDate, numNights, numGuests, status, totalPrice, rooms(name), guests(fullName, email), userID",
+      "id, created_at, startDate, endDate, numNights, numGuests, status, totalPrice, rooms(name), guests!bookings_guestId_fkey(fullName, email), userID",
       { count: "exact" }
     );
 
@@ -45,9 +45,11 @@ export async function getBooking(id) {
   // LIMIT 1;
   const { data, error } = await supabase
     .from("bookings")
-    .select("*, rooms(*), guests(*)")
+    .select("*, rooms(*), guests!bookings_guestId_fkey(*)")
     .eq("id", id)
     .single();
+
+  console.log(data, "heres my data");
 
   if (error) {
     console.error(error);
@@ -91,7 +93,9 @@ export async function deleteBooking(id) {
 export async function getStaysTodayActivity() {
   const { data, error } = await supabase
     .from("bookings")
-    .select("*, guests(fullName, nationality, countryFlag)")
+    .select(
+      "*, guests!bookings_guestId_fkey(fullName, nationality, countryFlag)"
+    )
     .or(
       `and(status.eq.unconfirmed,startDate.eq.${getToday()}),and(status.eq.checked-in,endDate.eq.${getToday()})`
     )
@@ -113,7 +117,7 @@ export async function getStaysAfterDate(date) {
   const { data, error } = await supabase
     .from("bookings")
     .select("*")
-    .select("*, guests(fullName)")
+    .select(`*, guests!bookings_guestId_fkey(fullName)`)
     .gte("startDate", date)
     .lte("startDate", getToday());
 

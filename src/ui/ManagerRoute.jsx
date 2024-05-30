@@ -1,11 +1,11 @@
 /* eslint-disable react/prop-types */
 
-import { useContext, useEffect } from "react";
+import { useEffect } from "react";
 import { useRoles } from "../features/authentication/useRoles";
 import { useUser } from "../features/authentication/useUser";
 import Spinner from "./Spinner";
 import styled from "styled-components";
-import { LoginContext } from "../features/authentication/LoginContext";
+
 import { useNavigate } from "react-router-dom";
 
 const FullPage = styled.div`
@@ -18,7 +18,6 @@ const FullPage = styled.div`
 
 function ManagerRoute({ children }) {
   const { isLoading, isAuthenticated } = useUser();
-  const { logOut } = useContext(LoginContext);
   const {
     role: { role },
   } = useRoles();
@@ -29,10 +28,9 @@ function ManagerRoute({ children }) {
     function () {
       if (role.user_role !== "manager" && role.user_role !== "admin") {
         navigate("/login");
-        logOut();
       }
     },
-    [navigate, isAuthenticated, isLoading, role.user_role, logOut]
+    [navigate, isAuthenticated, isLoading, role.user_role]
   );
 
   if (isLoading) {

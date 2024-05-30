@@ -5,9 +5,7 @@ import { useRoles } from "../features/authentication/useRoles";
 import { useUser } from "../features/authentication/useUser";
 import Spinner from "./Spinner";
 import styled from "styled-components";
-import { useContext, useEffect } from "react";
-import { LoginContext } from "../features/authentication/LoginContext";
-import { useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
 
 const FullPage = styled.div`
   height: 100vh;
@@ -19,8 +17,7 @@ const FullPage = styled.div`
 
 function AdminRoute({ children }) {
   const { isLoading, isAuthenticated } = useUser();
-  const { logOut } = useContext(LoginContext);
-  const queryClient = useQueryClient();
+
   const {
     role: { role },
   } = useRoles();
@@ -31,11 +28,9 @@ function AdminRoute({ children }) {
     function () {
       if (role.user_role !== "admin") {
         navigate("/login");
-       
-        logOut();
       }
     },
-    [navigate, isAuthenticated, isLoading, role.user_role, logOut, queryClient]
+    [navigate, isAuthenticated, isLoading, role.user_role]
   );
 
   if (isLoading) {
