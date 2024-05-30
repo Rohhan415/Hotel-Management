@@ -1,11 +1,26 @@
 import supabase, { supabaseUrl } from "./supabase";
 
-export async function signUp({ fullName, email, password }) {
+export async function signUp({ fullName, email, password, role }) {
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: { data: { fullName, avatar: "" } },
   });
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  console.log(user.id, "user id");
+
+  console.log(user, "user");
+
+  const { data: roleData, roleError } = await supabase
+    .from("user_role")
+    .insert([{ id: user.id, user_role: role }])
+    .select();
+
+  console.log(roleData, roleError, "endpoint");
 
   if (error) {
     throw new Error(error.message);
@@ -24,6 +39,7 @@ export async function login({ email, password }) {
     throw new Error(error.message);
   }
 
+  console.log(data);
   return data;
 }
 
@@ -33,6 +49,7 @@ export async function getCurrentUser() {
 
   const { data, error } = await supabase.auth.getUser();
 
+  console.log(data);
   if (error) {
     throw new Error(error.message);
   }

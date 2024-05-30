@@ -4,6 +4,21 @@ import Form from "../../ui/Form";
 import FormRow from "../../ui/FormRow";
 import Input from "../../ui/Input";
 import { useSignUp } from "./useSignUp";
+import styled from "styled-components";
+
+const StyledSelect = styled.select`
+  font-size: 1.4rem;
+  padding: 0.8rem 1.2rem;
+  border: 1px solid
+    ${(props) =>
+      props.type === "white"
+        ? "var(--color-grey-100)"
+        : "var(--color-grey-300)"};
+  border-radius: var(--border-radius-sm);
+  background-color: var(--color-grey-0);
+  font-weight: 500;
+  box-shadow: var(--shadow-sm);
+`;
 
 // Email regex: /\S+@\S+\.\S+/
 
@@ -12,8 +27,13 @@ function SignupForm() {
   const { register, formState, getValues, handleSubmit, reset } = useForm();
   const { errors } = formState;
 
-  function onSubmit({ fullName, email, password }) {
-    signUp({ fullName, email, password }, { onSettled: () => reset() });
+  function onSubmit({ fullName, email, password, role }) {
+    signUp(
+      { fullName, email, password, role },
+      {
+        onSettled: () => reset(),
+      }
+    );
   }
 
   return (
@@ -69,8 +89,20 @@ function SignupForm() {
           })}
         />
       </FormRow>
+
+      <FormRow label="Role" error={errors?.role?.message}>
+        <StyledSelect
+          id="role"
+          disabled={isLoading}
+          {...register("role", { required: "This field is required" })}
+        >
+          <option value="">Select role</option>
+          <option value="user">User</option>
+          <option value="manager">Manager</option>
+          <option value="admin">Admin</option>
+        </StyledSelect>
+      </FormRow>
       <FormRow>
-        {/* type is an HTML attribute! */}
         <Button
           variation="secondary"
           type="reset"

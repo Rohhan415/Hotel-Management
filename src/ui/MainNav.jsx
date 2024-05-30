@@ -7,6 +7,7 @@ import {
   HiOutlineHomeModern,
   HiOutlineUsers,
 } from "react-icons/hi2";
+import { useRoles } from "../features/authentication/useRoles";
 
 const NavList = styled.ul`
   display: flex;
@@ -54,39 +55,51 @@ const StyledNavLink = styled(NavLink)`
 `;
 
 function MainNav() {
+  const {
+    role: { role },
+  } = useRoles();
+
   return (
     <nav>
       <NavList>
-        <li>
-          <StyledNavLink to="/dashboard">
-            <HiOutlineHome />
-            <span>Home</span>
-          </StyledNavLink>
-        </li>
-        <li>
-          <StyledNavLink to="/bookings">
-            <HiOutlineCalendarDays />
-            <span>Bookings</span>
-          </StyledNavLink>
-        </li>
-        <li>
-          <StyledNavLink to="/rooms">
-            <HiOutlineHomeModern />
-            <span>Rooms</span>
-          </StyledNavLink>
-        </li>
-        <li>
-          <StyledNavLink to="/users">
-            <HiOutlineUsers />
-            <span>Users</span>
-          </StyledNavLink>
-        </li>
-        <li>
-          <StyledNavLink to="/settings">
-            <HiOutlineCog6Tooth />
-            <span>Settings</span>
-          </StyledNavLink>
-        </li>
+        <>
+          <li>
+            <StyledNavLink to="/dashboard">
+              <HiOutlineHome />
+              <span>Home</span>
+            </StyledNavLink>
+          </li>
+          <li>
+            <StyledNavLink to="/bookings">
+              <HiOutlineCalendarDays />
+              <span>Bookings</span>
+            </StyledNavLink>
+          </li>
+          {(role.user_role === "manager" || role.user_role === "admin") && (
+            <li>
+              <StyledNavLink to="/rooms">
+                <HiOutlineHomeModern />
+                <span>Rooms</span>
+              </StyledNavLink>
+            </li>
+          )}
+          {role.user_role === "admin" && (
+            <>
+              <li>
+                <StyledNavLink to="/users">
+                  <HiOutlineUsers />
+                  <span>Users</span>
+                </StyledNavLink>
+              </li>
+              <li>
+                <StyledNavLink to="/settings">
+                  <HiOutlineCog6Tooth />
+                  <span>Settings</span>
+                </StyledNavLink>
+              </li>
+            </>
+          )}
+        </>
       </NavList>
     </nav>
   );

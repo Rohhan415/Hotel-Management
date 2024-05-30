@@ -6,15 +6,18 @@ import FormRowVertical from "../../ui/FormRowVertical";
 import { useLogin } from "./useLogin";
 import SpinnerMini from "../../ui/SpinnerMini";
 
+import { useQueryClient } from "@tanstack/react-query";
+
 function LoginForm() {
   const [email, setEmail] = useState("kacper@example.com");
   const [password, setPassword] = useState("22222222");
   const { login, isLoading } = useLogin();
 
+  const queryClient = useQueryClient();
   function handleSubmit(e) {
     e.preventDefault();
     if (!email || !password) return;
-
+    queryClient.invalidateQueries({ queryKey: ["user_role"] });
     login(
       { email, password },
       {

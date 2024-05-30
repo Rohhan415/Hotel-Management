@@ -19,7 +19,6 @@ function CreateRoomForm({ roomToEdit = {}, onCloseModal }) {
   });
 
   const { errors } = formState;
-  console.log(errors);
 
   const { isCreating, createRoom } = useCreateRoom();
   const { isEditing, editRoom } = useEditRoom();
