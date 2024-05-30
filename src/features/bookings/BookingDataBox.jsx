@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import styled from "styled-components";
 import { format, isToday } from "date-fns";
@@ -12,6 +13,7 @@ import DataItem from "../../ui/DataItem";
 import { Flag } from "../../ui/Flag";
 
 import { formatDistanceFromNow, formatCurrency } from "../../utils/helpers";
+import Heading from "../../ui/Heading";
 
 const StyledBookingDataBox = styled.section`
   /* Box */
@@ -102,23 +104,25 @@ const Footer = styled.footer`
   text-align: right;
 `;
 
-// A purely presentational component
-function BookingDataBox({ booking }) {
+function BookingDataBox({ booking, bookingGuests }) {
   const {
     created_at,
     startDate,
     endDate,
     numNights,
-    numGuests,
     cabinPrice: roomPrice,
     extrasPrice,
     totalPrice,
     hasBreakfast,
     observations,
     isPaid,
-    guests: { fullName: guestName, email, country, countryFlag, nationalID },
+
     rooms: { name: roomName },
   } = booking;
+
+  const sortedBookingGuests = bookingGuests?.sort(
+    (a, b) => b.primary_guest - a.primary_guest
+  );
 
   return (
     <StyledBookingDataBox>
@@ -140,16 +144,34 @@ function BookingDataBox({ booking }) {
       </Header>
 
       <Section>
-        <Guest>
-          {countryFlag && <Flag src={countryFlag} alt={`Flag of ${country}`} />}
-          <p>
-            {guestName} {numGuests > 1 ? `+ ${numGuests - 1} guests` : ""}
-          </p>
-          <span>&bull;</span>
-          <p>{email}</p>
-          <span>&bull;</span>
-          <p>National ID {nationalID}</p>
-        </Guest>
+        {sortedBookingGuests.map((bookingGuest, index) => {
+          const { fullName, nationalID, countryFlag, email, country } =
+            bookingGuest.guests;
+          return (
+            <div key={index}>
+              {index === 0 && bookingGuest.primary_guest && (
+                <Heading as="h2">Booking guest</Heading>
+              )}
+              {index === 1 && !bookingGuest.primary_guest && (
+                <Heading as="h2">Additional guests</Heading>
+              )}
+              <Guest>
+                {countryFlag && (
+                  <Flag src={countryFlag} alt={`Flag of ${country}`} />
+                )}
+                <p>{fullName}</p>
+                {bookingGuest.primary_guest && (
+                  <>
+                    <span>&bull;</span>
+                    <p>{email}</p>
+                  </>
+                )}
+                <span>&bull;</span>
+                <p>National ID {nationalID}</p>
+              </Guest>
+            </div>
+          );
+        })}
 
         {observations && (
           <DataItem

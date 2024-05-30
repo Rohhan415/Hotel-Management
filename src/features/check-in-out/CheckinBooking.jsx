@@ -9,7 +9,7 @@ import ButtonText from "../../ui/ButtonText";
 
 import { useMoveBack } from "../../hooks/useMoveBack";
 import Spinner from "../../ui/Spinner";
-import useBooking from "../bookings/useBooking";
+import { useBooking } from "../bookings/useBooking";
 import { useEffect, useState } from "react";
 import Checkbox from "../../ui/Checkbox";
 import { formatCurrency } from "../../utils/helpers";
@@ -27,7 +27,7 @@ const Box = styled.div`
 function CheckinBooking() {
   const [confirmPaid, setConfirmPaid] = useState(false);
   const [addBreakfast, setAddBreakfast] = useState(false);
-  const { booking, isLoading } = useBooking();
+  const { booking, isLoading, bookingGuests } = useBooking();
   const { settings, isLoading: isLoadingSettings } = useSettings();
 
   useEffect(() => setConfirmPaid(booking?.isPaid ?? false), [booking]);
@@ -73,7 +73,7 @@ function CheckinBooking() {
         <ButtonText onClick={moveBack}>&larr; Back</ButtonText>
       </Row>
 
-      <BookingDataBox booking={booking} />
+      <BookingDataBox booking={booking} bookingGuests={bookingGuests} />
 
       {!hasBreakfast && (
         <Box>

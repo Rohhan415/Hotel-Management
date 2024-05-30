@@ -43,13 +43,27 @@ export async function getBooking(id) {
   // FROM bookings
   // WHERE id = ...
   // LIMIT 1;
+
   const { data, error } = await supabase
     .from("bookings")
-    .select("*, rooms(*), guests!bookings_guestId_fkey(*)")
+    .select("*, rooms(*), guests!bookings_guestId_fkey(*) ")
     .eq("id", id)
     .single();
 
-  console.log(data, "heres my data");
+  console.log(data);
+  if (error) {
+    console.error(error);
+    throw new Error("Booking not found");
+  }
+
+  return data;
+}
+
+export async function getBookingGuests(id) {
+  const { data, error } = await supabase
+    .from("reservation_guests")
+    .select("*, guests(*)")
+    .eq("id", id);
 
   if (error) {
     console.error(error);

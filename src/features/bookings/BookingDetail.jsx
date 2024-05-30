@@ -9,7 +9,7 @@ import Button from "../../ui/Button";
 import ButtonText from "../../ui/ButtonText";
 
 import { useMoveBack } from "../../hooks/useMoveBack";
-import useBooking from "./useBooking";
+import { useBooking } from "./useBooking";
 import Spinner from "../../ui/Spinner";
 
 import { useNavigate } from "react-router-dom";
@@ -20,6 +20,7 @@ import Modal from "../../ui/Modal";
 import ConfirmDelete from "../../ui/ConfirmDelete";
 import useDeleteBooking from "./useDeleteBooking";
 import Empty from "../../ui/Empty";
+// import { getBookingGuests } from "../../services/apiBookings";
 
 const HeadingGroup = styled.div`
   display: flex;
@@ -28,7 +29,7 @@ const HeadingGroup = styled.div`
 `;
 
 function BookingDetail() {
-  const { booking, isLoading } = useBooking();
+  const { booking, bookingGuests, isLoading } = useBooking();
   const { checkout, isCheckingOut } = useCheckout();
   const { deleteBooking, isDeleting } = useDeleteBooking();
 
@@ -55,7 +56,7 @@ function BookingDetail() {
         <ButtonText onClick={moveBack}>&larr; Back</ButtonText>
       </Row>
 
-      <BookingDataBox booking={booking} />
+      <BookingDataBox booking={booking} bookingGuests={bookingGuests} />
 
       <ButtonGroup>
         {status === "unconfirmed" && (
