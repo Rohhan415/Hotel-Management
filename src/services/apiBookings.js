@@ -94,6 +94,21 @@ export async function updateBooking(id, obj) {
 
 export async function deleteBooking(id) {
   //DELETE FROM bookings WHERE id = ...;
+
+  // Delete referenced records in reservation_guests
+  const { error: deleteGuestError } = await supabase
+    .from("reservation_guests")
+    .delete()
+    .eq("id", id); // Assuming 'booking_id' is the foreign key in reservation_guests
+
+  if (deleteGuestError) {
+    console.error(
+      "Error deleting referenced reservation_guests records:",
+      deleteGuestError
+    );
+    throw new Error("Could not delete referenced reservation_guests records");
+  }
+
   const { data, error } = await supabase.from("bookings").delete().eq("id", id);
 
   if (error) {

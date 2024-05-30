@@ -14,6 +14,8 @@ import { Flag } from "../../ui/Flag";
 
 import { formatDistanceFromNow, formatCurrency } from "../../utils/helpers";
 import Heading from "../../ui/Heading";
+import { Suspense } from "react";
+import Spinner from "../../ui/Spinner";
 
 const StyledBookingDataBox = styled.section`
   /* Box */
@@ -124,6 +126,8 @@ function BookingDataBox({ booking, bookingGuests }) {
     (a, b) => b.primary_guest - a.primary_guest
   );
 
+  console.log(sortedBookingGuests);
+
   return (
     <StyledBookingDataBox>
       <Header>
@@ -144,34 +148,36 @@ function BookingDataBox({ booking, bookingGuests }) {
       </Header>
 
       <Section>
-        {sortedBookingGuests.map((bookingGuest, index) => {
-          const { fullName, nationalID, countryFlag, email, country } =
-            bookingGuest.guests;
-          return (
-            <div key={index}>
-              {index === 0 && bookingGuest.primary_guest && (
-                <Heading as="h2">Booking guest</Heading>
-              )}
-              {index === 1 && !bookingGuest.primary_guest && (
-                <Heading as="h2">Additional guests</Heading>
-              )}
-              <Guest>
-                {countryFlag && (
-                  <Flag src={countryFlag} alt={`Flag of ${country}`} />
+        <Suspense fallback={<Spinner />}>
+          {sortedBookingGuests?.map((bookingGuest, index) => {
+            const { fullName, nationalID, countryFlag, email, country } =
+              bookingGuest.guests;
+            return (
+              <div key={index}>
+                {index === 0 && bookingGuest.primary_guest && (
+                  <Heading as="h2">Booking guest</Heading>
                 )}
-                <p>{fullName}</p>
-                {bookingGuest.primary_guest && (
-                  <>
-                    <span>&bull;</span>
-                    <p>{email}</p>
-                  </>
+                {index === 1 && !bookingGuest.primary_guest && (
+                  <Heading as="h2">Additional guests</Heading>
                 )}
-                <span>&bull;</span>
-                <p>National ID {nationalID}</p>
-              </Guest>
-            </div>
-          );
-        })}
+                <Guest>
+                  {countryFlag && (
+                    <Flag src={countryFlag} alt={`Flag of ${country}`} />
+                  )}
+                  <p>{fullName}</p>
+                  {bookingGuest.primary_guest && (
+                    <>
+                      <span>&bull;</span>
+                      <p>{email}</p>
+                    </>
+                  )}
+                  <span>&bull;</span>
+                  <p>National ID {nationalID}</p>
+                </Guest>
+              </div>
+            );
+          })}
+        </Suspense>
 
         {observations && (
           <DataItem
