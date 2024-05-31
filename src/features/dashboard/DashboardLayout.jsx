@@ -7,6 +7,8 @@ import { useRooms } from "../cabins/useRooms";
 import SalesChart from "./SalesChart";
 import DurationChart from "./DurationChart";
 import TodayActivity from "../check-in-out/TodayActivity";
+import RaportTable from "./RaportTable";
+import { useRoomsSales } from "./useRoomsSales";
 
 const StyledDashboardLayout = styled.div`
   display: grid;
@@ -23,10 +25,12 @@ function DashboardLayout() {
     isLoading: isLoadingStays,
   } = useRecentStays();
   const { rooms, isLoading: isLoadingRooms } = useRooms();
+  const {data, isLoading: isLoadingRoomsSales} = useRoomsSales();
 
-  if (isLoadingRecent || isLoadingStays || isLoadingRooms) return <Spinner />;
+  if (isLoadingRecent || isLoadingStays || isLoadingRooms || isLoadingRoomsSales) return <Spinner />;
 
   return (
+
     <StyledDashboardLayout>
       <Stats
         bookings={recentBookings}
@@ -37,7 +41,10 @@ function DashboardLayout() {
       <TodayActivity />
       <DurationChart confirmedStays={confirmedStays} />
       <SalesChart bookings={recentBookings} numDays={numDays} />
+      <RaportTable data={data}/>
     </StyledDashboardLayout>
+
+
   );
 }
 
