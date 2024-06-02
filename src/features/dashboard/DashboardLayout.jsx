@@ -17,6 +17,10 @@ const StyledDashboardLayout = styled.div`
   gap: 2.4rem;
 `;
 
+const StyledFullWidthElement = styled.div`
+  grid-column: 1 / -1; // This will make the element span the full width of the grid
+`;
+
 function DashboardLayout() {
   const { recentBookings, isLoading: isLoadingRecent } = useRecentBookings();
   const {
@@ -25,12 +29,17 @@ function DashboardLayout() {
     isLoading: isLoadingStays,
   } = useRecentStays();
   const { rooms, isLoading: isLoadingRooms } = useRooms();
-  const {data, isLoading: isLoadingRoomsSales} = useRoomsSales();
+  const { data, isLoading: isLoadingRoomsSales } = useRoomsSales();
 
-  if (isLoadingRecent || isLoadingStays || isLoadingRooms || isLoadingRoomsSales) return <Spinner />;
+  if (
+    isLoadingRecent ||
+    isLoadingStays ||
+    isLoadingRooms ||
+    isLoadingRoomsSales
+  )
+    return <Spinner />;
 
   return (
-
     <StyledDashboardLayout>
       <Stats
         bookings={recentBookings}
@@ -41,10 +50,10 @@ function DashboardLayout() {
       <TodayActivity />
       <DurationChart confirmedStays={confirmedStays} />
       <SalesChart bookings={recentBookings} numDays={numDays} />
-      <RaportTable data={data}/>
+      <StyledFullWidthElement>
+        <RaportTable data={data} />
+      </StyledFullWidthElement>
     </StyledDashboardLayout>
-
-
   );
 }
 

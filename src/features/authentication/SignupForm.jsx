@@ -43,7 +43,17 @@ function SignupForm() {
           type="text"
           id="fullName"
           disabled={isLoading}
-          {...register("fullName", { required: "This field is required" })}
+          {...register("fullName", {
+            required: "This field is required",
+            minLength: {
+              value: 2,
+              message: "Full name must be at least 2 characters",
+            },
+            maxLength: {
+              value: 20,
+              message: "Full name can't be longer than 20 characters",
+            },
+          })}
         />
       </FormRow>
       <FormRow label="Email address" error={errors?.email?.message}>
@@ -74,6 +84,12 @@ function SignupForm() {
               value: 8,
               message: "Password must be at least 8 characters",
             },
+            pattern: {
+              value:
+                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+              message:
+                "Password must contain at least one uppercase letter, one lowercase letter, one number and one special character",
+            },
           })}
         />
       </FormRow>
@@ -94,7 +110,12 @@ function SignupForm() {
         <StyledSelect
           id="role"
           disabled={isLoading}
-          {...register("role", { required: "This field is required" })}
+          {...register("role", {
+            required: "This field is required",
+            validate: (value) =>
+              ["user", "manager", "admin"].includes(value) ||
+              "Invalid role selected",
+          })}
         >
           <option value="">Select role</option>
           <option value="user">User</option>
