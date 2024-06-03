@@ -126,8 +126,6 @@ function BookingDataBox({ booking, bookingGuests }) {
     (a, b) => b.primary_guest - a.primary_guest
   );
 
-  console.log(sortedBookingGuests);
-
   return (
     <StyledBookingDataBox>
       <Header>

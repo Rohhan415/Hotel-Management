@@ -11,10 +11,6 @@ export async function signUp({ fullName, email, password, role }) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  console.log(user.id, "user id");
-
-  console.log(user, "user");
-
   const { data: roleData, roleError } = await supabase
     .from("user_role")
     .insert([{ id: user.id, user_role: role }])
@@ -22,11 +18,15 @@ export async function signUp({ fullName, email, password, role }) {
 
   console.log(roleData, roleError, "endpoint");
 
+  if (roleError) {
+    throw new Error(roleError.message);
+  }
+
   if (error) {
     throw new Error(error.message);
   }
 
-  return data;
+  return { data, roleData };
 }
 
 export async function login({ email, password }) {
@@ -39,7 +39,6 @@ export async function login({ email, password }) {
     throw new Error(error.message);
   }
 
-  console.log(data);
   return data;
 }
 
@@ -49,7 +48,6 @@ export async function getCurrentUser() {
 
   const { data, error } = await supabase.auth.getUser();
 
-  console.log(data);
   if (error) {
     throw new Error(error.message);
   }

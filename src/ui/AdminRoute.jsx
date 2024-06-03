@@ -6,6 +6,7 @@ import { useUser } from "../features/authentication/useUser";
 import Spinner from "./Spinner";
 import styled from "styled-components";
 import { useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 const FullPage = styled.div`
   height: 100vh;
@@ -17,6 +18,7 @@ const FullPage = styled.div`
 
 function AdminRoute({ children }) {
   const { isLoading, isAuthenticated } = useUser();
+  const queryClient = useQueryClient();
 
   const {
     role: { role },
@@ -28,9 +30,10 @@ function AdminRoute({ children }) {
     function () {
       if (role.user_role !== "admin") {
         navigate("/login");
+        queryClient.removeQueries({ queryKey: ["user_role"] });
       }
     },
-    [navigate, isAuthenticated, isLoading, role.user_role]
+    [navigate, isAuthenticated, isLoading, role.user_role, queryClient]
   );
 
   if (isLoading) {
