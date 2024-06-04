@@ -118,6 +118,7 @@ function BookingDataBox({ booking, bookingGuests }) {
     hasBreakfast,
     observations,
     isPaid,
+    userID,
 
     rooms: { name: roomName },
   } = booking;
@@ -205,6 +206,7 @@ function BookingDataBox({ booking, bookingGuests }) {
       </Section>
 
       <Footer>
+        <p>Employer ID: {userID}</p>
         <p>Booked {format(new Date(created_at), "EEE, MMM dd yyyy, p")}</p>
       </Footer>
     </StyledBookingDataBox>
