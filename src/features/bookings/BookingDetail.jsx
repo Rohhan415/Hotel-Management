@@ -20,6 +20,7 @@ import Modal from "../../ui/Modal";
 import ConfirmDelete from "../../ui/ConfirmDelete";
 import useDeleteBooking from "./useDeleteBooking";
 import Empty from "../../ui/Empty";
+import { useQueryClient } from "@tanstack/react-query";
 // import { getBookingGuests } from "../../services/apiBookings";
 
 const HeadingGroup = styled.div`
@@ -32,6 +33,7 @@ function BookingDetail() {
   const { booking, bookingGuests, isLoading } = useBooking();
   const { checkout, isCheckingOut } = useCheckout();
   const { deleteBooking, isDeleting } = useDeleteBooking();
+  const queryClient = useQueryClient(); // Add this line
 
   const moveBack = useMoveBack();
   const navigate = useNavigate();
@@ -44,6 +46,15 @@ function BookingDetail() {
     unconfirmed: "blue",
     "checked-in": "green",
     "checked-out": "silver",
+  };
+
+  const handleDeleteBooking = () => {
+    deleteBooking(bookingId, {
+      onSettled: () => {
+        queryClient.invalidateQueries(["isPaid"]); // Invalidate the specific query key here
+        navigate(-1);
+      },
+    });
   };
 
   return (
@@ -80,9 +91,7 @@ function BookingDetail() {
           <Modal.Window name="delete">
             <ConfirmDelete
               resourceName="booking"
-              onConfirm={() =>
-                deleteBooking(bookingId, { onSettled: () => navigate(-1) })
-              }
+              onConfirm={handleDeleteBooking}
               disabled={isDeleting}
             />
           </Modal.Window>

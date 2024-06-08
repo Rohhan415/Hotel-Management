@@ -9,33 +9,22 @@ import Stat from "./Stat";
 import { formatCurrency } from "../../utils/helpers";
 
 function Stats({ bookings, confirmedStays, numDays, roomCount }) {
+  console.log(bookings, "general kenobi");
   // 1.
   const numBookings = bookings.length;
-  console.log(numBookings);
 
   // 2.
-  const sales = bookings.reduce((acc, cur) => acc + cur.totalPrice, 0);
-
-  console.log(bookings);
-
-  console.log();
+  const sales = bookings
+    .filter((booking) => booking.isPaid)
+    .reduce((acc, cur) => acc + cur.totalPrice, 0);
 
   // 3.
   const checkIns = confirmedStays.length;
-
-  const occupationn = confirmedStays.reduce(
-    (acc, cur) => acc + cur.numNights,
-    0
-  );
-
-  console.log(occupationn, "occupationn");
 
   // 4.
   const occupation =
     confirmedStays.reduce((acc, cur) => acc + cur.numNights, 0) /
     (numDays * roomCount);
-
-  console.log(roomCount, "ss", numDays, "zz");
 
   // num checked in nights / all available nights (num days * num cabins)
 

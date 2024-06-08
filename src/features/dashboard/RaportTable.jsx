@@ -2,6 +2,11 @@ import styled from "styled-components";
 import PropTypes from "prop-types";
 import Heading from "../../ui/Heading";
 import SortBy from "../../ui/SortBy";
+import { useRoomsSales } from "./useRoomsSales";
+import { useState } from "react";
+import Spinner from "../../ui/Spinner";
+import { useSearchParams } from "react-router-dom";
+import { subDays } from "date-fns";
 
 const TableWrapper = styled.div`
   width: 100%;
@@ -44,11 +49,46 @@ const Tr = styled.tr`
   }
 `;
 
-function RaportTable({ data }) {
+function RaportTable() {
+  const [searchParams] = useSearchParams();
+
+  const numDays = !searchParams.get("last")
+    ? 7
+    : Number(searchParams.get("last"));
+
+  const initialEndDate = new Date().toISOString();
+  const initialStartDate = subDays(new Date(), numDays).toISOString();
+
+  const [startDate, setStartDate] = useState(initialStartDate);
+  const [endDate, setEndDate] = useState(initialEndDate);
+  const { data, isLoading: isLoadingRoomsSales } = useRoomsSales(
+    startDate,
+    endDate
+  );
+  if (isLoadingRoomsSales) return <Spinner />;
+
   return (
     <TableWrapper>
       <HeadingWrapper>
         <Heading as="h2">Room sales summary</Heading>
+        <div>
+          <label>
+            Start Date:
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+            />
+          </label>
+          <label>
+            End Date:
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+            />
+          </label>
+        </div>
         <SortBy
           options={[
             {
@@ -89,7 +129,7 @@ function RaportTable({ data }) {
           </tr>
         </thead>
         <tbody>
-          {data.map((data) => (
+          {data?.map((data) => (
             <Tr key={data.id}>
               <Td>{data.name}</Td>
               <Td>{data.totalSales}$</Td>

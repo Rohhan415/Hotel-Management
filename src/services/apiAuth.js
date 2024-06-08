@@ -16,8 +16,6 @@ export async function signUp({ fullName, email, password, role }) {
     .insert([{ id: user.id, user_role: role }])
     .select();
 
-  console.log(roleData, roleError, "endpoint");
-
   if (roleError) {
     throw new Error(roleError.message);
   }

@@ -15,6 +15,7 @@ import Checkbox from "../../ui/Checkbox";
 import { formatCurrency } from "../../utils/helpers";
 import { useCheckin } from "./useCheckin";
 import { useSettings } from "../settings/useSettings";
+import { useQueryClient } from "@tanstack/react-query";
 
 const Box = styled.div`
   /* Box */
@@ -29,6 +30,7 @@ function CheckinBooking() {
   const [addBreakfast, setAddBreakfast] = useState(false);
   const { booking, isLoading, bookingGuests } = useBooking();
   const { settings, isLoading: isLoadingSettings } = useSettings();
+  const { queryClient } = useQueryClient();
 
   useEffect(() => setConfirmPaid(booking?.isPaid ?? false), [booking]);
 
@@ -60,9 +62,13 @@ function CheckinBooking() {
           extrasPrice: optionalBreakfastPrice,
           totalPrice: totalPrice + optionalBreakfastPrice,
         },
+      }).then(() => {
+        queryClient.invalidateQueries(["isPaid"]);
       });
     } else {
-      checkin({ bookingId, breakfast: {} });
+      checkin({ bookingId, breakfast: {} }).then(() => {
+        queryClient.invalidateQueries(["isPaid"]);
+      });
     }
   }
 
