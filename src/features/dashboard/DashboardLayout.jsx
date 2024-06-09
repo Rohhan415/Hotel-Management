@@ -4,20 +4,16 @@ import Spinner from "../../ui/Spinner";
 import { useRecentStays } from "./useRecentStays";
 import Stats from "./Stats";
 import { useRooms } from "../cabins/useRooms";
-import SalesChart from "./SalesChart";
+
 import DurationChart from "./DurationChart";
 import TodayActivity from "../check-in-out/TodayActivity";
-import RaportTable from "./RaportTable";
+import SalesChart from "./SalesChart";
 
 const StyledDashboardLayout = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   grid-template-rows: auto 34rem auto;
   gap: 2.4rem;
-`;
-
-const StyledFullWidthElement = styled.div`
-  grid-column: 1 / -1; // This will make the element span the full width of the grid
 `;
 
 function DashboardLayout() {
@@ -41,10 +37,8 @@ function DashboardLayout() {
       />
       <TodayActivity />
       <DurationChart confirmedStays={confirmedStays} />
+
       <SalesChart bookings={recentBookings} numDays={numDays} />
-      <StyledFullWidthElement>
-        <RaportTable />
-      </StyledFullWidthElement>
     </StyledDashboardLayout>
   );
 }

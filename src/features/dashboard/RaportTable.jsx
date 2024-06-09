@@ -1,12 +1,8 @@
+/* eslint-disable react/prop-types */
 import styled from "styled-components";
-import PropTypes from "prop-types";
 import Heading from "../../ui/Heading";
 import SortBy from "../../ui/SortBy";
-import { useRoomsSales } from "./useRoomsSales";
-import { useState } from "react";
 import Spinner from "../../ui/Spinner";
-import { useSearchParams } from "react-router-dom";
-import { subDays } from "date-fns";
 
 const TableWrapper = styled.div`
   width: 100%;
@@ -17,6 +13,7 @@ const TableWrapper = styled.div`
 `;
 const HeadingWrapper = styled.div`
   display: flex;
+  align-items: center;
   justify-content: space-between;
 `;
 
@@ -49,51 +46,35 @@ const Tr = styled.tr`
   }
 `;
 
-function RaportTable() {
-  const [searchParams] = useSearchParams();
+const SpinnerWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 50vh; /* Adjust to match the height of your table */
+  min-width: 100%; /* Adjust to match the width of your table */
+  grid-row: span 4;
+`;
 
-  const numDays = !searchParams.get("last")
-    ? 7
-    : Number(searchParams.get("last"));
-
-  const initialEndDate = new Date().toISOString();
-  const initialStartDate = subDays(new Date(), numDays).toISOString();
-
-  const [startDate, setStartDate] = useState(initialStartDate);
-  const [endDate, setEndDate] = useState(initialEndDate);
-  const { data, isLoading: isLoadingRoomsSales } = useRoomsSales(
-    startDate,
-    endDate
-  );
-  if (isLoadingRoomsSales) return <Spinner />;
+function RaportTable({ data }) {
+  const displayData = data?.map((data) => (
+    <Tr key={data.id}>
+      <Td>{data.name}</Td>
+      <Td>{data.totalSales}$</Td>
+      <Td>{data.extrasSales}$</Td>
+      <Td>{data.maxPrice}$</Td>
+    </Tr>
+  ));
 
   return (
     <TableWrapper>
       <HeadingWrapper>
         <Heading as="h2">Room sales summary</Heading>
-        <div>
-          <label>
-            Start Date:
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-            />
-          </label>
-          <label>
-            End Date:
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-            />
-          </label>
-        </div>
+
         <SortBy
           options={[
             {
               value: "totalSales-desc",
-              label: "Sort table by total sales (hight first)",
+              label: "Sort table by total sales (high first)",
             },
             {
               value: "totalSales-asc",
@@ -101,7 +82,7 @@ function RaportTable() {
             },
             {
               value: "extrasSales-desc",
-              label: "Sort table by extras sales (hight first)",
+              label: "Sort table by extras sales (high first)",
             },
             {
               value: "extrasSales-asc",
@@ -109,7 +90,7 @@ function RaportTable() {
             },
             {
               value: "maxPrice-desc",
-              label: "Sort table by max price (hight first)",
+              label: "Sort table by max price (high first)",
             },
             {
               value: "maxPrice-asc",
@@ -128,31 +109,21 @@ function RaportTable() {
             <Th>Max Price</Th>
           </tr>
         </thead>
-        <tbody>
-          {data?.map((data) => (
-            <Tr key={data.id}>
-              <Td>{data.name}</Td>
-              <Td>{data.totalSales}$</Td>
-              <Td>{data.extrasSales}$</Td>
-              <Td>{data.maxPrice}$</Td>
-            </Tr>
-          ))}
-        </tbody>
+
+        {data == null ? (
+          <tr>
+            <td colSpan="4">
+              <SpinnerWrapper>
+                <Spinner />
+              </SpinnerWrapper>
+            </td>
+          </tr>
+        ) : (
+          <tbody>{displayData}</tbody>
+        )}
       </Table>
     </TableWrapper>
   );
 }
-
-RaportTable.propTypes = {
-  data: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.number.isRequired,
-      name: PropTypes.string.isRequired,
-      totalSales: PropTypes.number.isRequired,
-      extrasSales: PropTypes.number.isRequired,
-      maxPrice: PropTypes.number.isRequired,
-    })
-  ).isRequired,
-};
 
 export default RaportTable;

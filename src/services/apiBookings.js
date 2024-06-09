@@ -161,7 +161,9 @@ export async function getStaysAfterDate(date) {
 export async function getBookingsAfterDate(date) {
   const { data, error } = await supabase
     .from("bookings")
-    .select("created_at, totalPrice, extrasPrice, cabinId, isPaid")
+    .select(
+      "created_at, totalPrice, extrasPrice, cabinId, isPaid,startDate, endDate"
+    )
     .gte("created_at", date)
     .lte("created_at", getToday({ end: true }));
 
@@ -173,19 +175,22 @@ export async function getBookingsAfterDate(date) {
   return data;
 }
 
-export async function getPaidBookingsAfterDate(startDate, endDate) {
+export async function getPaidBookingsAfterDate({
+  queryStartDate,
+  queryEndDate,
+}) {
   const { data, error } = await supabase
     .from("bookings")
-    .select("created_at, totalPrice, extrasPrice, cabinId, isPaid")
-    .gte("created_at", startDate)
-    .lte("created_at", endDate || getToday({ end: true }));
+    .select(
+      "created_at, totalPrice, extrasPrice, cabinId, isPaid, startDate, endDate"
+    )
+    .gte("startDate", queryStartDate)
+    .lte("endDate", queryEndDate);
 
   if (error) {
     console.error(error);
     throw new Error("Bookings could not get loaded");
   }
-
-  console.log(data, "data");
 
   return data;
 }

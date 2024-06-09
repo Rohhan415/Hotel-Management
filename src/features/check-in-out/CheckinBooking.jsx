@@ -62,13 +62,11 @@ function CheckinBooking() {
           extrasPrice: optionalBreakfastPrice,
           totalPrice: totalPrice + optionalBreakfastPrice,
         },
-      }).then(() => {
-        queryClient.invalidateQueries(["isPaid"]);
       });
+      queryClient.invalidateQueries(["isPaid"]);
     } else {
-      checkin({ bookingId, breakfast: {} }).then(() => {
-        queryClient.invalidateQueries(["isPaid"]);
-      });
+      checkin({ bookingId, breakfast: {} });
+      queryClient.invalidateQueries(["isPaid"]);
     }
   }
 

@@ -9,7 +9,7 @@ import Stat from "./Stat";
 import { formatCurrency } from "../../utils/helpers";
 
 function Stats({ bookings, confirmedStays, numDays, roomCount }) {
-  console.log(bookings, "general kenobi");
+ 
   // 1.
   const numBookings = bookings.length;
 

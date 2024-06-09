@@ -72,7 +72,7 @@ function BookingRow({
   const handleDeleteBooking = () => {
     deleteBooking(bookingId, {
       onSettled: () => {
-        queryClient.invalidateQueries(["isPaid"]); // Invalidate the specific query key here
+        queryClient.removeQueries(["isPaid"]); // Invalidate the specific query key here
       },
     });
   };

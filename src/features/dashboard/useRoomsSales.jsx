@@ -2,6 +2,7 @@ import { useRooms } from "../cabins/useRooms";
 import Spinner from "../../ui/Spinner";
 import { useSearchParams } from "react-router-dom";
 import { usePaidBookings } from "./useRecentSales";
+import { format } from "date-fns";
 
 export function useRoomsSales(startDate, endDate) {
   const { rooms, isLoading: isRoomsLoading } = useRooms();
@@ -25,15 +26,13 @@ export function useRoomsSales(startDate, endDate) {
 
   if (isRoomsLoading || isBookingsLoading) return <Spinner />;
 
-  const sales = bookings.reduce((acc, cur) => acc + cur.totalPrice, 0);
-  console.log(sales, "sales");
-
   const rawData = rooms?.map((room) => {
     const paidBookingsForRoom = bookings.filter(
       (booking) => booking.cabinId == room.id && booking.isPaid
     );
 
     return {
+      label: format(room.created_at, "MMM dd"),
       id: room.id,
       name: room.name,
       totalSales: paidBookingsForRoom.reduce(
@@ -52,6 +51,6 @@ export function useRoomsSales(startDate, endDate) {
   });
 
   const data = [...rawData].sort(sortFunctions[sortParam]);
-  console.log(rawData, "rawData");
-  return { data, isLoading: false };
+
+  return { data, isRoomsLoading };
 }
