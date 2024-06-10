@@ -184,8 +184,10 @@ export async function getPaidBookingsAfterDate({
     .select(
       "created_at, totalPrice, extrasPrice, cabinId, isPaid, startDate, endDate"
     )
-    .gte("startDate", queryStartDate)
-    .lte("endDate", queryEndDate);
+    .gte("created_at", queryStartDate)
+    .lte("created_at", queryEndDate);
+
+  console.log(data, " heloo");
 
   if (error) {
     console.error(error);

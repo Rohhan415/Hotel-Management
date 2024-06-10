@@ -11,6 +11,8 @@ export function useRoomsSales(startDate, endDate) {
     endDate
   );
 
+  console.log(bookings);
+
   const [searchParams] = useSearchParams();
 
   const sortParam = searchParams.get("sortBy") || "totalSales-desc";
